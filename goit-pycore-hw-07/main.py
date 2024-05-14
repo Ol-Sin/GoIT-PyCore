@@ -1,386 +1,169 @@
-# from cont_func import *  # Імпортуємо модуль, що містить функції обробки контактів та читання/збереження файлу
-# from decorators import *  # Імпортуємо модуль, що містить функцію-декоратор
-# from collections import UserDict
-# from datetime import datetime, timedelta
+from cont_func import *  # Імпортуємо модуль, який містить функції обробки контактів та читання/збереження файлу
+from decorators import *  # Імпортуємо модуль, який містить функцію-декоратор
+from collections import UserDict  # Імпортуємо метод для роботи з словниками
+from datetime import datetime, timedelta  # Імпортуємо метод для роботи з датою
 
-# class Field:
-#     def __init__(self, value):
-#         self.value = value
-
-#     def __str__(self):
-#         return str(self.value)
-
-# class Name(Field):
-#     pass
-
-# class Phone(Field):
-#     def __init__(self, value):
-#         if not self.validate_phone(value):
-#             raise ValueError("Invalid phone number format.")
-#         super().__init__(value)
-
-#     @staticmethod
-#     def validate_phone(value):
-#         return len(value) == 10 and value.isdigit()
-
-# class Record:
-#     def __init__(self, name):
-#         self.name = Name(name)
-#         self.phones = []
-#         self.birthday = None  # Додали атрибут birthday
-
-#     def __str__(self):
-#         return f"Contact name: {self.name.value}, phones: {'; '.join(p.value for p in self.phones)}"
-
-#     def add_phone(self, phone):
-#         self.phones.append(Phone(phone))
-
-#     def remove_phone(self, phone):
-#         self.phones = [p for p in self.phones if p.value != phone]
-
-#     def edit_phone(self, old_phone, new_phone):
-#         if not Phone.validate_phone(new_phone):
-#             raise ValueError("Invalid phone number format.")
-#         for phone in self.phones:
-#             if phone.value == old_phone:
-#                 phone.value = new_phone
-#                 break
-
-#     def find_phone(self, phone):
-#         for p in self.phones:
-#             if p.value == phone:
-#                 return p.value
-#         return None
-#     def set_birthday(self, birthday):
-#         self.birthday = birthday
-
-#     def add_birthday(self, birthday):
-#         self.birthday = datetime.strptime(birthday, "%d.%m.%Y")
-
-# class AddressBook(UserDict):
-#     def __init__(self):
-#         self.data = {}
-
-#     def add_record(self, record):
-#         self.data[record.name.value] = record
-
-#     def find(self, name):
-#         return self.data.get(name)
-
-#     def delete(self, name):
-#         if name in self.data:
-#             del self.data[name]
-
-#     def get_upcoming_birthdays(self):
-#         current_day = datetime.today().date()
-#         upcoming_birthdays = []
-
-#         for name, record in self.data.items():
-#             if record.birthday:
-#                 birthday = record.birthday
-#                 birthday = birthday.replace(year=current_day.year)
-#                 if birthday < current_day:
-#                     birthday = birthday.replace(year=current_day.year + 1)
-
-#                 if current_day <= birthday <= current_day + timedelta(days=7):
-#                     if current_day.weekday() < 5 and birthday.weekday() < 5:
-#                         congratulation_date = birthday
-#                         formatted_congratulation_date = congratulation_date.strftime("%A, %d %B")
-#                         upcoming_birthdays.append({"name": record.name.value, "congratulation_date": formatted_congratulation_date})
-
-#         upcoming_birthdays.sort(key=lambda x: datetime.strptime(x["congratulation_date"], "%A, %d %B"))
-#         return upcoming_birthdays
-
-# def parse_input(user_input): # Функція обробки вводу користувача
-#     cmd, *args = user_input.split() # Розділяємо ввід користувача на команду та параметри
-#     cmd = cmd.strip().lower() # Прибираємо зайві пробіли та переводимо команду до нижнього регістру для уніфікації
-#     return cmd, args
-
-# @input_error
-# def add_birthday(args, book):
-#     if len(args) != 2: # Перевірка наявності необхідної кількості аргументів для команди
-#         return "Invalid command. Format: add-birthday [name] [DD.MM.YYYY]"
-#     name, birthday = args
-#     try:
-#         record = book.data.get(name)  # Отримуємо об'єкт Record за ім'ям
-#         if record:
-#             record.add_birthday(birthday)
-#             save_contacts(book.data)  # Зберігаємо зміни у файл
-#             return f"Birthday added for {name}."
-#         else:
-#             # Якщо запис не існує, створюємо новий об'єкт Record і додаємо його до адресної книги
-#             record = Record(name)
-#             record.add_birthday(birthday)
-#             book.add_record(record)
-#             save_contacts(book.data)  # Зберігаємо зміни у файл
-#             return f"New contact '{name}' created with birthday {birthday}."
-#     except ValueError:
-#         return "Invalid date format. Please use DD.MM.YYYY format for the birthday."
-
-# @input_error
-# def show_birthday(args, book):
-#     if len(args) != 1:
-#         return "Invalid command. Format: show-birthday [name]"
-#     name = args[0]
-#     try:
-#         birthday = book[name].birthday.strftime("%d.%m.%Y")
-#         return f"{name}'s birthday is on {birthday}."
-#     except KeyError:
-#         return f"Contact '{name}' not found."
-
-# @input_error
-# def birthdays(args, book):
-#     upcoming_birthdays = book.get_upcoming_birthdays()
-#     if not upcoming_birthdays:
-#         return "No upcoming birthdays found."
-#     return "\n".join([f"{entry['name']}'s birthday is on {entry['congratulation_date']}." for entry in upcoming_birthdays])
-
-# def main(): # Головна функція бота
-#         # Приклад ініціалізації контактів як об'єктів Record та їх додавання до адресної книги
-#     print("Hello! Welcome to the assistant bot!") # Виводимо привітання від бота
-
-#     contacts = load_contacts()  # Завантажуємо контакти
-#     book = AddressBook()  # Створюємо об'єкт адресної книги
-#     record1 = Record("John Doe")
-#     record1.add_phone("1234567890")
-#     record1.add_birthday("15.05.1981")
-
-#     record2 = Record("Jane Smith")
-#     record2.add_phone("0987654321")
-#     record2.add_birthday("20.07.1975")
-
-#     book.add_record(record1)
-#     book.add_record(record2)
-#     book.data = contacts  # Завантажуємо контакти в адресну книгу
-
-#     while True:
-#         command = input("Enter a command: ").strip().lower() # Отримуємо введену користувачем команду
-
-#         if command in ["close", "exit"]: # Обробляємо вихід з програми
-#             print("Good bye!")
-#             break
-
-#         elif command == "hello": # Привітання
-#             print("How can I help you?")
-
-#         elif command == "help": # Довідка по командам
-#             print("""This is what I can help you with working with contacts:
-#                   - add (add new contact),
-#                   - change (change existing contact),
-#                   - phone (show phone by name),
-#                   - all (print all contacts I know),
-#                   - add-birthday (add birthday for a contact),
-#                   - show-birthday (show birthday for a contact),
-#                   - birthdays (show upcoming birthdays),
-#                   - help (print this message),
-#                   - close or exit (end of work)""")
-
-#         else:
-#             cmd, args = parse_input(command) # Визначаємо команду та аргументи
-#             if cmd == "add":
-#                 print(add_contact(args, contacts))
-#             elif cmd == "change":
-#                 print(change_contact(args, contacts))
-#             elif cmd == "phone":
-#                 print(show_phone(args, contacts))
-#             elif cmd == "all":
-#                 print(show_all(contacts))
-#             elif cmd == "add-birthday":
-#                 print(add_birthday(args, book))
-#             elif cmd == "show-birthday":
-#                 print(show_birthday(args, book))
-#             elif cmd == "birthdays":
-#                 print(birthdays(args, book))
-#             else:
-#                 print("Invalid command.") # Повідомлення про невідому команду
-
-# if __name__ == "__main__": # Перевірка, чи файл є головним скриптом
-#     main()
-
-from cont_func import *
-from decorators import *
-from collections import UserDict
-from datetime import datetime, timedelta
-
-class Field:
+class Field:  # Створюємо базовий клас для роботи з даними
     def __init__(self, value):
         self.value = value
 
     def __str__(self):
         return str(self.value)
 
-class Name(Field):
+class Name(Field):  # Похідний клас для роботи з іменами
     pass
 
-class Phone(Field):
+class Phone(Field):  # Похідний клас для роботи з телефонами
     def __init__(self, value):
-        if not self.validate_phone(value):
+        if not self.validate_phone(value):  # Перевірка номеру
             raise ValueError("Invalid phone number format.")
         super().__init__(value)
 
-    @staticmethod
-    def validate_phone(value):
+    @staticmethod  # Використовуємо декоратор для доповнення класу валідацією номера
+    def validate_phone(value):  # Валідація формату номеру
         return len(value) == 10 and value.isdigit()
 
-class Birthday(Field):
+class Birthday(Field):  # Похідний клас для роботи з днями народження
     def __init__(self, value):
         try:
-            self.value = datetime.strptime(value, "%d.%m.%Y").date()
+            self.value = datetime.strptime(value, "%d.%m.%Y").date()  # Переводимо вміст рядкового запису дня народження та представляємо його у заданому форматі дати
         except ValueError:
-            raise ValueError("Invalid date format. Use DD.MM.YYYY")
+            raise ValueError("Invalid date format. Use DD.MM.YYYY")  # Обробка виключення при хибному форматі
 
-class Record:
+class Record:  # Створюємо клас для обробки записів
     def __init__(self, name):
-        self.name = Name(name)
-        self.phones = []
-        self.birthday = None
+        self.name = Name(name)  # Визначаємо ім'я типом класу
+        self.phones = []  # Ініціалізуємо номери як список для можливості зберігати декілька номерів
+        self.birthday = None  # Ініціалізуємо необов'язковий атрибут для дня народження
 
-    def __str__(self):
-        phone_numbers = '; '.join(p.value for p in self.phones)
-        birthday_info = f", birthday: {self.birthday.value.strftime('%d.%m.%Y')}" if self.birthday else ""
-        return f"Contact name: {self.name.value}, phones: {phone_numbers}{birthday_info}"
+    def __str__(self):  # Описуємо представлення рядка за допомогою магучного методу
+        phone_numbers = '; '.join(p.value for p in self.phones)  # Створюємо атрибут для номерів як послідовності з використанням роздільника
+        if self.birthday:  # Перевіряємо чи отримали значення для дня народження
+            birthday_info = f", birthday: {self.birthday.value.strftime('%d.%m.%Y')}"  # Атрибут для представлення дня народження у заданому форматі
+        else:
+            birthday_info = ""  # Якщо значення не отримали, робимо його порожнім
+        return f"Contact name: {self.name.value}, phones: {phone_numbers}{birthday_info}"  # Повертаємо інформацію про запис у зручному форматі
 
-    def add_phone(self, phone):
+    def add_phone(self, phone):  # Метод для додавання номеру до списку
         self.phones.append(Phone(phone))
 
-    def remove_phone(self, phone):
+    def remove_phone(self, phone):  # Метод для видалення (насправді перезапису) номерів у списку
         self.phones = [p for p in self.phones if p.value != phone]
 
-    def edit_phone(self, old_phone, new_phone):
-        if not Phone.validate_phone(new_phone):
+    def edit_phone(self, old_phone, new_phone):  # Метод для оновлення номеру
+        if not Phone.validate_phone(new_phone):  # Використання класу для валідації номеру
             raise ValueError("Invalid phone number format.")
-        for phone in self.phones:
+        for phone in self.phones:  # Перевіряємо відповідність старого номеру при оновлені на новий
             if phone.value == old_phone:
                 phone.value = new_phone
                 break
 
-    def find_phone(self, phone):
+    def find_phone(self, phone):  # Метод для пошуку номера в записі
         for p in self.phones:
             if p.value == phone:
                 return p.value
         return None
 
-    def add_birthday(self, birthday):
-        if self.birthday:
-            return "Birthday already set."
-        self.birthday = Birthday(birthday)
+    def add_birthday(self, birthday):  # Метод для додавання дня народження
+        self.birthday = Birthday(birthday)  # Визначаємо атрибут як клас
 
-class AddressBook(UserDict):
+class AddressBook(UserDict):  # Клас для словника адресної книги
     def __init__(self):
-        self.data = {}
+        self.data = {}  # Ініціалізація даних як словника
 
-    def add_record(self, record):
+    def add_record(self, record):  # Метод для додавання запису в словник
         self.data[record.name.value] = record
 
-    def find(self, name):
+    def find(self, name):  # Метод для пошуку запису в словнику
         return self.data.get(name)
 
-    def delete(self, name):
+    def delete(self, name):  # Метод для видалення запису з словника
         if name in self.data:
             del self.data[name]
 
-    def get_upcoming_birthdays(self):
-        current_day = datetime.today().date()
-        upcoming_birthdays = []
+    def get_upcoming_birthdays(self):  # Метод для отримання записів з найближчими днями народження
+        current_day = datetime.today().date()  # Визначаємо поточну дату
+        upcoming_birthdays = []  # Ініціалізація списку найближчих днів народження
 
-        for name, record in self.data.items():
-            if record.birthday:
-                birthday = record.birthday.value
-                birthday = birthday.replace(year=current_day.year)
-                if birthday < current_day:
-                    birthday = birthday.replace(year=current_day.year + 1)
+        for name, record in self.data.items():  # Прохід по записам в словнику за атрибутами
+            if record.birthday:  # Пошук наявності атрибуту дня народження
+                birthday = record.birthday.value  # Отримуємо значення дня народження
+                birthday = birthday.replace(year=current_day.year)  # Замінюємо рік в знайденому значенні на поточний
+                if birthday < current_day:  # Перевірка чи день народження вже минув
+                    birthday = birthday.replace(year=current_day.year + 1)  # Якщо так, збільшуємо рік для опрацювання цього запису в майбутньому
 
-                if current_day <= birthday <= current_day + timedelta(days=7):
-                    if current_day.weekday() < 5 and birthday.weekday() < 5:
-                        congratulation_date = birthday
-                        formatted_congratulation_date = congratulation_date.strftime("%A, %d %B")
-                        upcoming_birthdays.append({"name": record.name.value, "congratulation_date": formatted_congratulation_date})
+                if current_day <= birthday <= current_day + timedelta(days=7):  # Задаємо критерії для опрацювання, якщо день народження в найближчі 7 днів від поточної дати
+                    if current_day.weekday() < 5 and birthday.weekday() < 5:  # Перевіряємо чи днь народження в межах робочих днів на цьому тижні
+                        congratulation_date = birthday  # Якщо попередні умови виконано - ініціалізуємо атрибут з датою привітання
+                        formatted_congratulation_date = congratulation_date.strftime("%A, %d %B")  # Атрибут для представлення дати привітання з днем народження у заданому форматі
+                        upcoming_birthdays.append({"name": record.name.value, "congratulation_date": formatted_congratulation_date})  # Додаємо запис до списку
 
-        upcoming_birthdays.sort(key=lambda x: datetime.strptime(x["congratulation_date"], "%A, %d %B"))
-        return upcoming_birthdays
+        upcoming_birthdays.sort(key=lambda x: datetime.strptime(x["congratulation_date"], "%A, %d %B"))  # Відсортовуємо список за датами привітання
+        return upcoming_birthdays  # Виводимо список найближчих днів народження
 
-def parse_input(user_input):
-    cmd, *args = user_input.split()
-    cmd = cmd.strip().lower()
+def parse_input(user_input):  # Функція обробки вводу користувача
+    cmd, *args = user_input.split()  # Розділяємо ввід користувача, як команду та параметри
+    cmd = cmd.strip().lower()  # Прибираємо зайві пробіли та зводимо введену команду до нижнього регістру щоб мінімізувати похибку введених даних
     return cmd, args
-
+	
 @input_error
 def add_birthday(args, book):
-    if len(args) != 2:
-        return "Invalid command. Format: add-birthday [name] [DD.MM.YYYY]"
     name, birthday = args
-    try:
-        record = book.data.get(name)
-        if record and hasattr(record, 'add_birthday') and callable(getattr(record, 'add_birthday')):
-            record.add_birthday(birthday)
-            save_contacts(book.data)
-            return f"Birthday added for {name}."
-        else:
-            return f"Contact '{name}' not found or does not support adding a birthday."
-    except ValueError as e:
-        return str(e)
-
+    record = book.find(name)
+    if record:
+        record.add_birthday(birthday)
+        return f"Birthday added for {name}."
+    else:
+        return f"Contact {name} not found."
 
 @input_error
 def show_birthday(args, book):
-    if len(args) != 1:
-        return "Invalid command. Format: show-birthday [name]"
-    name = args[0]
-    try:
-        birthday = book[name].birthday.value.strftime("%d.%m.%Y")
-        return f"{name}'s birthday is on {birthday}."
-    except KeyError:
-        return f"Contact '{name}' not found."
+    name, = args
+    record = book.find(name)
+    if record and record.birthday:
+        return f"{name}'s birthday is on {record.birthday.value.strftime('%d.%m.%Y')}."
+    elif record:
+        return f"{name} has no birthday set."
+    else:
+        return f"Contact {name} not found."
 
 @input_error
 def birthdays(args, book):
     upcoming_birthdays = book.get_upcoming_birthdays()
-    if not upcoming_birthdays:
-        return "No upcoming birthdays found."
-    return "\n".join([f"{entry['name']}'s birthday is on {entry['congratulation_date']}." for entry in upcoming_birthdays])
+    if upcoming_birthdays:
+        return "\n".join([f"{birthday['name']}'s birthday is on {birthday['congratulation_date']}." for birthday in upcoming_birthdays])
+    else:
+        return "No upcoming birthdays."
 
-def main():
-    print("Hello! Welcome to the assistant bot!")
-
-    contacts = load_contacts()
+@input_error  # Огортаємо основну функцію функцією-декоратором
+def main(contacts):  # Головна функція бота
     book = AddressBook()
-
-    record1 = Record("John Doe")
-    record1.add_phone("1234567890")
-    record1.add_birthday("15.05.1981")
-
-    record2 = Record("Jane Smith")
-    record2.add_phone("0987654321")
-    record2.add_birthday("20.07.1975")
-
-    book.add_record(record1)
-    book.add_record(record2)
-    book.data = contacts
+    print("Hello! Welcome to the assistant bot!")  # Виводимо привітання від бота
 
     while True:
-        command = input("Enter a command: ").strip().lower()
+        command = input("Enter a command: ").strip().lower()  # Отримання вводу від користувача
 
-        if command in ["close", "exit"]:
+        if command in ["close", "exit"]:  # Обробка виходу з боту
             print("Good bye!")
             break
 
-        elif command == "hello":
+        elif command == "hello":  # Ініціація привітання
             print("How can I help you?")
 
-        elif command == "help":
+        elif command == "help":  # Вивід довідки по поточним можливостям боту
             print("""This is what I can help you with working with contacts:
                   - add (add new contact),
                   - change (change existing contact),
                   - phone (show phone by name),
                   - all (print all contacts I know),
-                  - add-birthday (add birthday for a contact),
-                  - show-birthday (show birthday for a contact),
-                  - birthdays (show upcoming birthdays),
+				  - add-birthday (add birthday for contact)
+				  - show-birthday (show birthday for contact)
+				  - birthdays (show upcoming birthdays)
                   - help (print this message),
                   - close or exit (end of work)""")
 
         else:
-            cmd, args = parse_input(command)
+            cmd, args = parse_input(command)  # Визначаєто яку функцію ініціює користувач
             if cmd == "add":
                 print(add_contact(args, contacts))
             elif cmd == "change":
@@ -396,7 +179,8 @@ def main():
             elif cmd == "birthdays":
                 print(birthdays(args, book))
             else:
-                print("Invalid command.")
+                print("Invalid command.")  # Вивід повідомлення коли команда не відповідає поточному функціоналу
 
-if __name__ == "__main__":
-    main()
+if __name__ == "__main__":  # Перевіряємо, чи запущено цей файл як основний скрипт
+    contacts = load_contacts()  # Виклик функції load_contacts() для перевірки наявності файлу з контактами
+    main(contacts)  # Запускаємо основну функцію
