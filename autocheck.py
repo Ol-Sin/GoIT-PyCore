@@ -1,33 +1,41 @@
-class Point:
-    def __init__(self, x, y):
-        self.__x = None
-        self.__y = None
-        self.x = x
-        self.y = y
+# class Point:
+#     def __init__(self, x, y):
+#         self.__x = None
+#         self.__y = None
+#         self.x = x
+#         self.y = y
 
-    @property
-    def x(self):
-        return self.__x
+#     @property
+#     def x(self):
+#         return self.__x
 
-    @x.setter
-    def x(self, x):
-        if type(x) in (int, float):
-            self.__x = x
-        else:
-            self.__x = None
+#     @x.setter
+#     def x(self, x):
+#         if type(x) in (int, float):
+#             self.__x = x
+#         else:
+#             self.__x = None
 
-    @property
-    def y(self):
-        return self.__y
+#     @property
+#     def y(self):
+#         return self.__y
 
-    @y.setter
-    def y(self, y):
-        if type(y) in (int, float):
-            self.__y = y
-        else:
-            self.__y = None
+#     @y.setter
+#     def y(self, y):
+#         if type(y) in (int, float):
+#             self.__y = y
+#         else:
+#             self.__y = None
 
-point = Point("a", 10)
+# point = Point("a", 10)
 
-print(point.x)  # None
-print(point.y)  # 10
+# print(point.x)  # None
+# print(point.y)  # 10
+
+def outer(x):
+    def inner(y):
+        return x + y
+    return inner
+add_five = outer(5)
+print(add_five(3))
+print(add_five(10))
